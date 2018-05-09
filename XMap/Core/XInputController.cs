@@ -26,13 +26,36 @@ namespace XMap.Core
         Controller controller;
         #endregion
 
+        Mapping map;
+
         public XInputController()
         {
             controller = new Controller(UserIndex.One);
             Connected = controller.IsConnected;
+            map = new Mapping()
+            {
+                Macros = new List<Macro>()
+                {
+                    new Macro()
+                    {
+                        OnKeyDown = "A",
+                        Actions = new List<BaseAction>()
+                        {
+                            new KeyAction()
+                            {
+                                Type = ActionType.OnKeyDown,
+                                Key = "VK_E",
+                            }
+                        }
+                    }
+                }
+            };
+
+
+
         }
         
-        public void Poll(Action func)
+        public void Poll(System.Action func)
         {
             IsPolling = true;
 

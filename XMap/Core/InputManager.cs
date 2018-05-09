@@ -24,6 +24,15 @@ namespace XMap.Core
 
         #endregion
 
+        #region Private Fields
+        InputSimulator input;
+        #endregion
+
+
+        public InputManager()
+        {
+            input = new InputSimulator();
+        }
 
         private IntPtr CurrentWindow()
         {
@@ -31,12 +40,9 @@ namespace XMap.Core
         }
 
 
-        public void SendKey(string text)
+        public void KeyDown(VirtualKeyCode key)
         {
-            var sim = new InputSimulator();
-            sim.Keyboard.TextEntry(text);
-            sim.Keyboard.KeyDown(VirtualKeyCode.RETURN);
-
+            input.Keyboard.KeyDown(key);
         }
 
         public string GetActiveWindowTitle()
@@ -47,9 +53,9 @@ namespace XMap.Core
 
             if (GetWindowText(handle, Buff, nChars) > 0)
             {
-                Console.WriteLine(Buff.ToString());
                 return Buff.ToString();
             }
+
             return null;
         }
     }

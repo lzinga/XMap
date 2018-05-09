@@ -6,18 +6,32 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using XMap.Core;
+using SharpDX.XInput;
+using XMap.Common;
 
 namespace XMap
 {
     public class Setup
     {
-        public List<Mapping> Mappings { get; private set; }
+        public Mapping map { get; private set; }
         public XInputController Controller { get; private set; } = new XInputController();
 
         public Setup()
         {
-            var json = File.ReadAllText(Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "Configs", "map.json"));
-            var mappings = JsonConvert.DeserializeObject<List<Mapping>>(json);
+            var content = File.ReadAllText(Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "Configs", "map.xml"));
+            map = content.Deserialize<Mapping>();
+            Controller.OnButtonPressed += Controller_OnButtonPressed;
+        }
+
+        private void Controller_OnButtonPressed(GamepadButtonFlags buttons)
+        {
+            Console.WriteLine($"Buttons: {buttons}");
+            var actions = map.Macros.Where(i => buttons.ToString().Equals(i.OnKeyDown, StringComparison.OrdinalIgnoreCase)).SelectMany(i => i.Actions);
+            foreach (var action in actions)
+            {
+                Console.WriteLine($"Executing {action.Type} action.");
+                action.Execute();
+            }
         }
 
         private bool IsKeyPressed(ConsoleKey key)
@@ -27,7 +41,6 @@ namespace XMap
 
         public Setup Execute()
         {
-            Controller.OnButtonPressed += Controller_OnButtonPressed;
             Controller.Poll(() =>
             {
                 if (IsKeyPressed(ConsoleKey.Escape))
@@ -37,24 +50,6 @@ namespace XMap
             });
 
             return this;
-        }
-
-        private void Controller_OnButtonPressed(SharpDX.XInput.GamepadButtonFlags buttons)
-        {
-            Console.WriteLine(buttons);
-            if(buttons == SharpDX.XInput.GamepadButtonFlags.A)
-            {
-                InputManager input = new InputManager();
-                input.SendKey("A: IM STILL CALLING YOU GAY");
-
-            }
-            else if (buttons == SharpDX.XInput.GamepadButtonFlags.B)
-            {
-                InputManager input = new InputManager();
-                input.SendKey("B: It is okay janooba, B is here for you.");
-
-            }
-
         }
     }
 }
