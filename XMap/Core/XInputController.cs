@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using XMap.Common;
 
 namespace XMap.Core
 {
@@ -14,7 +15,7 @@ namespace XMap.Core
         #region Public Properties
         public int deadband = 2500;
         public bool Connected { get; set; } = false;
-        public bool IsPolling { get; set; }
+        public bool IsPolling { get; private set; }
         #endregion
 
         #region Events
@@ -24,6 +25,7 @@ namespace XMap.Core
 
         #region Private Fields
         Controller controller;
+        State previousState;
         #endregion
 
         Mapping map;
@@ -50,33 +52,36 @@ namespace XMap.Core
                     }
                 }
             };
+        }
 
-
-
+        public void Stop()
+        {
+            this.IsPolling = false;
         }
         
+
         public void Poll(System.Action func)
         {
             IsPolling = true;
 
-            var previousState = controller.GetState();
+            previousState = controller.GetState();
             while (this.Connected && this.IsPolling)
             {
                 func();
-                var state = controller.GetState();
-                if (previousState.PacketNumber != state.PacketNumber)
+                var currentState = controller.GetState();
+                if (previousState.PacketNumber != currentState.PacketNumber)
                 {
-                    InputCheck(state.Gamepad);
+                    InputCheck(currentState.Gamepad);
                 }
 
                 Thread.Sleep(10);
-                previousState = state;
+                previousState = currentState;
             }
         }
 
         private void InputCheck(Gamepad state)
         {
-            if(state.Buttons != GamepadButtonFlags.None)
+            if (state.Buttons != GamepadButtonFlags.None)
             {
                 OnButtonPressed?.Invoke(state.Buttons);
             }

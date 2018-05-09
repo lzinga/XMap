@@ -25,11 +25,14 @@ namespace XMap
 
         private void Controller_OnButtonPressed(GamepadButtonFlags buttons)
         {
-            Console.WriteLine($"Buttons: {buttons}");
-            var actions = map.Macros.Where(i => buttons.ToString().Equals(i.OnKeyDown, StringComparison.OrdinalIgnoreCase)).SelectMany(i => i.Actions);
+            var macros = map.Macros.Where(i => buttons.ToString().Equals(i.OnKeyDown, StringComparison.OrdinalIgnoreCase));
+
+            foreach(var macro in macros)
+            {
+                macro.HoldTime
+            }
             foreach (var action in actions)
             {
-                Console.WriteLine($"Executing {action.Type} action.");
                 action.Execute();
             }
         }
@@ -45,7 +48,7 @@ namespace XMap
             {
                 if (IsKeyPressed(ConsoleKey.Escape))
                 {
-                    Controller.IsPolling = false;
+                    Controller.Stop();
                 }
             });
 

@@ -24,6 +24,9 @@ namespace XMap.Core
         [XmlAttribute]
         public string OnKeyDown { get; set; }
 
+        [XmlAttribute]
+        public int? HoldTime { get; set; }
+
         [XmlElement(ElementName = "Action")]
         public List<BaseAction> Actions { get; set; }
     }
