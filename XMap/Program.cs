@@ -1,8 +1,15 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using SharpDX.XInput;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using XMap.Core;
 
 namespace XMap
 {
@@ -10,6 +17,9 @@ namespace XMap
     {
         static void Main(string[] args)
         {
+            Setup setup = new Setup().Execute();
+            Console.ReadKey();
         }
+
     }
 }
