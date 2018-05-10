@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace XMap.Core.Actions
+﻿namespace XMap.Core.Actions
 {
     public class BaseAction : IAction
     {

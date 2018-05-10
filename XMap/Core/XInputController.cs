@@ -1,12 +1,6 @@
 ﻿using SharpDX.XInput;
 using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using XMap.Common;
 
 namespace XMap.Core
 {
@@ -48,7 +42,7 @@ namespace XMap.Core
         }
 
         
-        public void Poll(System.Action func)
+        public void Poll(Action func)
         {
             IsPolling = true;
 

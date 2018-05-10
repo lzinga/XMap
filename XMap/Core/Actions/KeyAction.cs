@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
-using WindowsInput.Native;
+﻿using System.Xml.Serialization;
 using XMap.Common;
 
 namespace XMap.Core.Actions

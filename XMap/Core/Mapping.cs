@@ -1,13 +1,6 @@
-﻿using Newtonsoft.Json;
-using SharpDX.XInput;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
-using WindowsInput.Native;
-using XMap.Common;
 using XMap.Core.Actions;
 
 namespace XMap.Core
