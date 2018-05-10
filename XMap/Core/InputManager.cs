@@ -4,9 +4,9 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using WindowsInput;
 using WindowsInput.Native;
+using XMap.Common;
 
 namespace XMap.Core
 {
@@ -29,6 +29,7 @@ namespace XMap.Core
         #endregion
 
 
+
         public InputManager()
         {
             input = new InputSimulator();
@@ -40,9 +41,21 @@ namespace XMap.Core
         }
 
 
-        public void KeyDown(VirtualKeyCode key)
+        public void KeyDown(Keys key)
         {
-            input.Keyboard.KeyDown(key);
+            var vKey = this.ToVKey(key);
+            input.Keyboard.KeyDown(vKey);
+        }
+
+        public void Text(string str)
+        {
+            input.Keyboard.TextEntry(str);
+        }
+
+
+        private VirtualKeyCode ToVKey(Keys key)
+        {
+            return (VirtualKeyCode)((int)key);
         }
 
         public string GetActiveWindowTitle()

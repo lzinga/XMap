@@ -57,6 +57,11 @@
   <ItemGroup>
     <Compile Include="Common\Enums.cs" />
     <Compile Include="Common\Extensions.cs" />
+    <Compile Include="Common\Log.cs" />
+    <Compile Include="Core\Actions\BaseAction.cs" />
+    <Compile Include="Core\Actions\IAction.cs" />
+    <Compile Include="Core\Actions\TextAction.cs" />
+    <Compile Include="Core\Actions\KeyAction.cs" />
     <Compile Include="Core\InputManager.cs" />
     <Compile Include="Core\Mapping.cs" />
     <Compile Include="Core\XInputController.cs" />

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using WindowsInput.Native;
 using XMap.Common;
+using XMap.Core.Actions;
 
 namespace XMap.Core
 {
@@ -18,6 +19,7 @@ namespace XMap.Core
         public List<Macro>  Macros { get; set; }
     }
 
+    [XmlInclude(typeof(TextAction))]
     [XmlInclude(typeof(KeyAction))]
     public class Macro
     {
@@ -25,49 +27,19 @@ namespace XMap.Core
         public string OnKeyDown { get; set; }
 
         [XmlAttribute]
-        public int? HoldTime { get; set; }
+        public int HoldTime { get; set; }
 
         [XmlElement(ElementName = "Action")]
         public List<BaseAction> Actions { get; set; }
-    }
 
-    public interface IAction
-    {
-        void Execute();
-    }
-
-    public class BaseAction : IAction
-    {
-        [XmlAttribute]
-        public ActionType Type { get; set; }
-
-        public virtual void Execute()
+        public override string ToString()
         {
-        }
-    }
-
-    public class KeyAction : BaseAction
-    {
-        [XmlAttribute]
-        public string Modifier { get; set; }
-
-        [XmlAttribute]
-        public string Key { get; set; }
-
-        public override void Execute()
-        {
-            VirtualKeyCode key;
-            if (Enum.TryParse<VirtualKeyCode>(this.Key, out key))
+            if(HoldTime != 0)
             {
-                InputManager manager = new InputManager();
-                manager.KeyDown(key);
-            }
-            else
-            {
-                throw new InvalidOperationException();
+                return $"\"{this.OnKeyDown}\" was held down for {this.HoldTime} seconds, executing {this.Actions.Count()} macro actions.";
             }
 
+            return $"\"{this.OnKeyDown}\" was pressed, executing {this.Actions.Count()} macro actions.";
         }
     }
-
 }
