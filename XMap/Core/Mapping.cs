@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Xml.Serialization;
 using XMap.Core.Actions;
+using XMap.Core.Conditions;
 
 namespace XMap.Core
 {
@@ -14,8 +15,10 @@ namespace XMap.Core
 
     [XmlInclude(typeof(TextAction))]
     [XmlInclude(typeof(KeyAction))]
+    [XmlInclude(typeof(ButtonsPressed))]
     public class Macro
     {
+
         [XmlAttribute]
         public string OnKeyDown { get; set; }
 
@@ -25,7 +28,10 @@ namespace XMap.Core
         [XmlAttribute]
         public int HoldTime { get; set; }
 
-        [XmlElement(ElementName = "Action")]
+        [XmlArrayItem("Condition")]
+        public List<BaseCondition> Conditions { get; set; }
+
+        [XmlArrayItem("Action")]
         public List<BaseAction> Actions { get; set; }
 
         public override string ToString()

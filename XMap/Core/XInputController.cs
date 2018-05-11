@@ -13,6 +13,7 @@ namespace XMap.Core
         public bool IsPolling { get; private set; }
         public bool HoldingButtons { get; private set; }
         public TimeSpan CurrentHoldTime { get; private set; }
+        public Gamepad Gamepad { get; private set; }
         #endregion
 
         #region Events
@@ -56,6 +57,7 @@ namespace XMap.Core
                     this.HoldingButtons = false;
                     CheckButtonPressed(currentState.Gamepad);
                     holdButtonStart = null;
+                    this.Gamepad = currentState.Gamepad;
                 }
                 else if(previousState.PacketNumber == currentState.PacketNumber && currentState.Gamepad.Buttons != GamepadButtonFlags.None)
                 {

@@ -12,7 +12,7 @@ namespace XMap
     {
         public Mapping config { get; private set; }
         public XInputController Controller { get; private set; } = new XInputController();
-        public WindowManager winManager = new WindowManager();
+        public WindowManager windowManager = new WindowManager();
         public Setup(string configFile = "")
         {
             if (string.IsNullOrEmpty(configFile))
@@ -63,68 +63,44 @@ namespace XMap
 
         private bool Controller_OnButtonHold(GamepadButtonFlags buttons, TimeSpan duration)
         {
-            var macros = config.Macros
-                .Where(i => i.HoldTime != 0 && buttons.ToString().Equals(i.OnKeyDown, StringComparison.OrdinalIgnoreCase) && new TimeSpan(0, 0, i.HoldTime) <= duration);
-            if (macros.Any())
-            {
-                ExecuteMacros(macros);
-                return true;
-            }
-
-            return false;
+            return RunMacros();
         }
 
         private void Controller_OnButtonPressed(GamepadButtonFlags buttons)
         {
-            var macros = config.Macros.Where(i => buttons.ToString().Equals(i.OnKeyDown, StringComparison.OrdinalIgnoreCase) && i.HoldTime == 0);
-            ExecuteMacros(macros);
-
+            RunMacros();
         }
 
-        private void ExecuteMacros(IEnumerable<Macro> macros)
+        private bool RunMacros()
         {
-            foreach (var macro in macros)
-            {
+            bool anyExecuted = false;
 
+            foreach (var macro in config.Macros)
+            {
                 bool conditionsMet = true;
-                // If the active window is defined in the macro,
-                // determine if the current window meets the condition
-                if (!string.IsNullOrEmpty(macro.ActiveProcess))
+                foreach(var condition in macro.Conditions)
                 {
-                    var processName = winManager.GetActiveProcessName();
-                    // If the macros ActiveProcess doesn't equal the current active process
-                    if (!processName.Equals(macro.ActiveProcess, StringComparison.OrdinalIgnoreCase))
+                    if(condition.Validate(Controller, windowManager))
                     {
                         conditionsMet = false;
                     }
-
-                    
                 }
 
-                Log.WriteLineColor("=================================================================================================", ConsoleColor.DarkGray);
-                Log.WriteAction(LogMarker.Macro, macro.ToString());
                 if (!conditionsMet)
                 {
-                    Log.WriteAction(LogMarker.Condtn, $"Macro condition \"ActiveProcess\"==\"{macro.ActiveProcess}\" failed.");
                     continue;
                 }
-                else
-                {
-                    Log.WriteAction(LogMarker.Condtn, $"Macro condition \"ActiveProcess\"==\"{macro.ActiveProcess}\" successful.");
-                }
-
-
-                
-
-
 
                 for (int i = 0; i < macro.Actions.Count; i++)
                 {
                     var action = macro.Actions[i];
                     Log.WriteAction(LogMarker.Action, $"\t {i + 1}. {action.ToString()}");
                     action.Execute();
+                    anyExecuted = true;
                 }
             }
+
+            return anyExecuted;
         }
 
         private bool IsKeyPressed(ConsoleKey key)
