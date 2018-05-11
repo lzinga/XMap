@@ -13,20 +13,27 @@ namespace XMap.Core
         public List<Macro>  Macros { get; set; }
     }
 
-    [XmlInclude(typeof(TextAction))]
-    [XmlInclude(typeof(KeyAction))]
-    [XmlInclude(typeof(ButtonsPressed))]
-    [XmlInclude(typeof(ActiveProcess))]
     public class Macro
     {
         [XmlAttribute]
         public string Name { get; set; }
-
 
         [XmlArrayItem("Condition")]
         public List<BaseCondition> Conditions { get; set; }
 
         [XmlArrayItem("Action")]
         public List<BaseAction> Actions { get; set; }
+
+        [XmlIgnore]
+        public bool IsRunning { get; set; }
+
+        [XmlIgnore]
+        public bool HasHoldCondition
+        {
+            get
+            {
+                return this.Conditions.Any(i => i.GetType() == typeof(HoldCondition));
+            }
+        }
     }
 }

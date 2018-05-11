@@ -40,11 +40,13 @@ namespace XMap.Core
         public void Stop()
         {
             this.IsPolling = false;
+            Log.WriteAction(LogMarker.Config, $"Polling Stopped.");
         }
 
         
         public void Poll(Action func)
         {
+            Log.WriteAction(LogMarker.Config, $"Polling Started.");
             IsPolling = true;
 
             previousState = controller.GetState();
@@ -52,28 +54,36 @@ namespace XMap.Core
             {
                 func();
                 var currentState = controller.GetState();
+                
                 if (previousState.PacketNumber != currentState.PacketNumber)
                 {
                     this.HoldingButtons = false;
                     CheckButtonPressed(this.GetState());
                     holdButtonStart = null;
                 }
-                else if(previousState.PacketNumber == currentState.PacketNumber && currentState.Gamepad.Buttons != GamepadButtonFlags.None)
+                else if(previousState.PacketNumber == currentState.PacketNumber)
                 {
-                    if (!holdButtonStart.HasValue)
+                    // If triggers are being used with no buttons, or only buttons are being pressed and no triggers, check for hold.
+                    if(((currentState.Gamepad.LeftTrigger > 0 || currentState.Gamepad.RightTrigger > 0) && currentState.Gamepad.Buttons == GamepadButtonFlags.None) ||
+                        currentState.Gamepad.Buttons != GamepadButtonFlags.None)
                     {
-                        holdButtonStart = DateTime.Now;
-                        this.CurrentHoldTime = new TimeSpan(0, 0, 0);
-                    }
-                    else
-                    {
-                        this.CurrentHoldTime = DateTime.Now - holdButtonStart.Value;
+                        if (!holdButtonStart.HasValue)
+                        {
+                            holdButtonStart = DateTime.Now;
+                            this.CurrentHoldTime = new TimeSpan(0, 0, 0);
+                        }
+                        else
+                        {
+                            this.CurrentHoldTime = DateTime.Now - holdButtonStart.Value;
+                        }
+
+                        this.HoldingButtons = true;
+                        CheckButtonHeld(this.GetState());
                     }
 
-                    CheckButtonHeld(this.GetState());
                 }
 
-                Thread.Sleep(10);
+               Thread.Sleep(30);
                 previousState = currentState;
             }
         }
@@ -98,12 +108,10 @@ namespace XMap.Core
 
         private void CheckButtonHeld(XInputControllerState state)
         {
-            if (state.State.Gamepad.Buttons != GamepadButtonFlags.None)
+            if (OnButtonHold != null && OnButtonHold.Invoke(this.GetState()))
             {
-                if (OnButtonHold != null && OnButtonHold.Invoke(this.GetState()))
-                {
-                    holdButtonStart = null;
-                }
+                this.HoldingButtons = false;
+                holdButtonStart = null;
             }
         }
 

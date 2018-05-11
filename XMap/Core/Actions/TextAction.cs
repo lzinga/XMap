@@ -11,16 +11,16 @@ namespace XMap.Core.Actions
     public class TextAction : BaseAction
     {
         [XmlAttribute]
-        public string Text { get; set; }
+        public string Key { get; set; }
 
         public override void Execute()
         {
-            this.input.Text(this.Text);
+            this.input.Text(this.Key);
         }
 
         public override string ToString()
         {
-            return $"Writing \"{this.Text}\".";
+            return $"Writing \"{this.Key}\".";
         }
     }
 }

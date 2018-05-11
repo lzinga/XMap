@@ -13,7 +13,7 @@ namespace XMap.Core.Conditions
 
         }
 
-        public virtual bool Validate(XInputControllerState state, WindowManager window)
+        public virtual bool Validate(XInputControllerState controler, WindowManager window)
         {
             return false;
         }

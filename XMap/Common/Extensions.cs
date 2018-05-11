@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Xml.Serialization;
 
 namespace XMap.Common
@@ -25,6 +26,15 @@ namespace XMap.Common
         public static T Deserialize<T>(this string data)
         {
             XmlSerializer serializer = new XmlSerializer(typeof(T));
+            using (TextReader reader = new StringReader(data))
+            {
+                return (T)serializer.Deserialize(reader);
+            }
+        }
+
+        public static T Deserialize<T>(this string data, params Type[] includeTypes)
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(T), includeTypes);
             using (TextReader reader = new StringReader(data))
             {
                 return (T)serializer.Deserialize(reader);

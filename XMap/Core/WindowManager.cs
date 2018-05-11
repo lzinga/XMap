@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -31,7 +32,15 @@ namespace XMap.Core
             uint procId = 0;
             GetWindowThreadProcessId(hWnd, out procId);
             var proc = Process.GetProcessById((int)procId);
-            return Path.GetFileName(proc.MainModule.FileName);
+            try
+            {
+                return Path.GetFileName(proc.MainModule.FileName);
+            }
+            catch(Win32Exception ex)
+            {
+                // Best we can do at this point.
+            }
+            return string.Empty;
         }
 
 

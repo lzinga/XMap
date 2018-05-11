@@ -8,14 +8,16 @@ using XMap.Common;
 
 namespace XMap.Core.Conditions
 {
-    public class ActiveProcess : BaseCondition
+    [XmlType(TypeName = "ButtonsPressed")]
+    public class ButtonsPressedCondition : BaseCondition
     {
         [XmlAttribute]
-        public string Name { get; set; }
+        public string Key { get; set; }
 
         public override bool Validate(XInputControllerState state, WindowManager window)
         {
-            if(window.GetActiveProcessName().Equals(this.Name, StringComparison.OrdinalIgnoreCase))
+            if (state.State.Gamepad.Buttons.ToString()
+                .Equals(this.Key, StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
@@ -26,7 +28,7 @@ namespace XMap.Core.Conditions
 
         public override string ToString()
         {
-            return $"{nameof(ActiveProcess)} condition, is active window {this.Name}?";
+            return $"{this.GetType().Name}: Is {this.Key} pressed?";
         }
     }
 }

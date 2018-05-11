@@ -5,6 +5,8 @@ using System.Linq;
 using XMap.Core;
 using SharpDX.XInput;
 using XMap.Common;
+using XMap.Core.Conditions;
+using XMap.Core.Actions;
 
 namespace XMap
 {
@@ -50,7 +52,11 @@ namespace XMap
             }
 
             string xml = File.ReadAllText(file);
-            config = xml.Deserialize<Mapping>();
+
+            List<Type> subClasses = new List<Type>();
+            subClasses.AddRange(Utilities.FindSubClassesOf<BaseCondition>());
+            subClasses.AddRange(Utilities.FindSubClassesOf<BaseAction>());
+            config = xml.Deserialize<Mapping>(subClasses.ToArray());
 
             Log.WriteAction(LogMarker.Config, $"Loaded Config \"{file}\"");
             Log.WriteAction(LogMarker.Config, $"{this.config.Macros.Count()} macro with {this.config.Macros.Sum(i => i.Actions.Count())} actions.");
@@ -63,49 +69,109 @@ namespace XMap
 
         private bool ControllerEvent(XInputControllerState state)
         {
-            return RunMacros(state);
-        }
+            // Get all macros with the ones with the highest condition count, these should execute first.
+            var item = config.Macros.OrderByDescending(i => i.Conditions.Count);
 
-        private bool RunMacros(XInputControllerState state)
-        {
-            bool anyExecuted = false;
-            foreach (var macro in config.Macros)
+            var running = config.Macros.SingleOrDefault(i => i.IsRunning);
+            if (running != null)
             {
-                bool conditionsMet = true;
-                List<string> conditionChecks = new List<string>();
-                foreach(var condition in macro.Conditions)
+
+                // If the user stops holding the buttons stop the action.
+                if (!state.HoldingButtons)
                 {
-                    var passed = condition.Validate(state, windowManager);
-                    if (!passed)
+                    running.IsRunning = false;
+                    return false;
+                }
+
+
+                // Check if its conditions are met again.
+                bool allConditionsMet = true;
+                foreach (var condition in running.Conditions)
+                {
+                    bool currentConditionPassed = condition.Validate(state, windowManager);
+                    if (!currentConditionPassed)
                     {
-                        conditionsMet = false;
+                        allConditionsMet = false;
                     }
-
-                    conditionChecks.Add($"{condition.ToString()} Did it pass? {passed}");
                 }
 
-                if (!conditionsMet)
+                if (allConditionsMet)
                 {
-                    continue;
+                    RunMacro(state, running);
+                    running.IsRunning = false;
+                    return true;
                 }
-
-                Log.WriteLineColor("================================================================", ConsoleColor.DarkGray);
-                Log.WriteAction(LogMarker.Macro, $"{macro.Name} macro conditions passed, executing {macro.Actions.Count} actions.");
-                foreach(var conLog in conditionChecks)
+                else
                 {
-                    Log.WriteAction(LogMarker.Condtn, conLog);
-                }
-
-                for (int i = 0; i < macro.Actions.Count; i++)
-                {
-                    var action = macro.Actions[i];
-                    Log.WriteAction(LogMarker.Action, $"\t {i + 1}. {action.ToString()}");
-                    action.Execute();
-                    anyExecuted = true;
+                    return false;
                 }
             }
 
-            return anyExecuted;
+            // Find macros that match the current state and try to ignore others.
+            foreach (var macro in item)
+            {
+                //// Is any macro already running, just execute it again since its already been validated.
+                //var running = config.Macros.SingleOrDefault(i => i.IsRunning);
+                //if (running != null)
+                //{
+                //    return RunMacro(state, running);
+                //}
+
+                bool allconditionsPassed = true;
+                foreach (var condition in macro.Conditions)
+                {
+                    bool currentConditionPassed = condition.Validate(state, windowManager);
+                    if (condition.GetType() == typeof(HoldCondition))
+                    {
+                        // If the current condition is a hold condition, ignore validating it for now.
+                    }
+                    else if(!currentConditionPassed)
+                    {
+                        allconditionsPassed = false;
+                    }
+                }
+
+                
+                // If all other conditions passed other than hold, lets mark it as running and check it again later.
+                if (allconditionsPassed && macro.HasHoldCondition)
+                {
+                    macro.IsRunning = true;
+                    return false;
+                }
+
+
+                // If all conditions passed and it doesn't have a hold condition, lets execute it.
+                if(allconditionsPassed)
+                {
+                    RunMacro(state, macro);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="state"></param>
+        /// <param name="macro"></param>
+        /// <returns></returns>
+        private void RunMacro(XInputControllerState state, Macro macro)
+        {
+            Log.WriteLineColor("================================================================", ConsoleColor.DarkGray);
+            Log.WriteAction(LogMarker.Macro, $"{macro.Name} macro conditions passed, executing {macro.Actions.Count} actions.");
+            //foreach (var conLog in conditionChecks)
+            //{
+            //    Log.WriteAction(LogMarker.Condtn, conLog);
+            //}
+
+            for (int i = 0; i < macro.Actions.Count; i++)
+            {
+                var action = macro.Actions[i];
+                Log.WriteAction(LogMarker.Action, $"\t {i + 1}. {action.ToString()}");
+                action.Execute();
+            }
         }
 
         private bool IsKeyPressed(ConsoleKey key)
