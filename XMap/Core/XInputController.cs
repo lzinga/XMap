@@ -1,6 +1,7 @@
 ﻿using SharpDX.XInput;
 using System;
 using System.Threading;
+using XMap.Common;
 
 namespace XMap.Core
 {
@@ -27,7 +28,6 @@ namespace XMap.Core
         State previousState;
         #endregion
 
-        Mapping map;
         private DateTime? holdButtonStart = null;
 
         public XInputController()
@@ -72,7 +72,6 @@ namespace XMap.Core
                     CheckButtonHeld(currentState.Gamepad, this.CurrentHoldTime);
                 }
 
-                
                 Thread.Sleep(10);
                 previousState = currentState;
             }
@@ -90,12 +89,9 @@ namespace XMap.Core
         {
             if (state.Buttons != GamepadButtonFlags.None)
             {
-                if (OnButtonHold != null)
+                if (OnButtonHold != null && OnButtonHold.Invoke(state.Buttons, duration))
                 {
-                    if(OnButtonHold.Invoke(state.Buttons, duration))
-                    {
-                        holdButtonStart = null;
-                    }
+                    holdButtonStart = null;
                 }
             }
         }

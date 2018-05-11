@@ -18,7 +18,13 @@ namespace XMap.Core.Actions
 
         public override string ToString()
         {
-            return $"\"{this.Key}\" pressed with modifier of \"{this.Modifier}\"";
+            if (string.IsNullOrEmpty(this.Modifier))
+            {
+                return $"\"{this.Key}\" pressed.";
+            }
+
+
+            return $"\"{this.Key}\" pressed with modifier of \"{this.Modifier}\".";
         }
     }
 }

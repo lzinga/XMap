@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Drawing;
 namespace XMap.Common
 {
     public static class Log
@@ -10,14 +10,21 @@ namespace XMap.Common
         }
 
 
-        public static void WriteColor(string str, ConsoleColor color)
+        public static void WriteColor(object str, ConsoleColor color)
         {
             Console.ForegroundColor = color;
             Console.Write(str);
             Console.ResetColor();
         }
 
-        public static void Write(string str, bool isEnd = false)
+        public static void WriteLineColor(object str, ConsoleColor color)
+        {
+            Log.WriteDate();
+            Log.WriteColor(str, color);
+            Log.Write(null, true);
+        }
+
+        public static void Write(object str, bool isEnd = false)
         {
             Console.Write(str);
 
@@ -33,23 +40,34 @@ namespace XMap.Common
             Log.Write(str, true);
         }
 
+        public static void WriteLine(object str)
+        {
+            Log.WriteDate();
+            Log.Write(str, true);
+        }
 
-        public static void WriteAction(LogMarker action, string str)
+        public static void WriteAction(LogMarker action, object str)
         {
             ConsoleColor color;
             switch (action)
             {
-                case LogMarker.Action:
+                case LogMarker.Macro:
                     color = ConsoleColor.Yellow;
                     break;
-                case LogMarker.Macro:
-                    color = ConsoleColor.Green;
+                case LogMarker.Action:
+                    color = ConsoleColor.DarkYellow;
+                    break;
+                case LogMarker.Condtn:
+                    color = ConsoleColor.DarkYellow;
                     break;
                 case LogMarker.Config:
-                    color = ConsoleColor.White;
+                    color = ConsoleColor.DarkGray;
                     break;
                 case LogMarker.Error:
                     color = ConsoleColor.Red;
+                    break;
+                case LogMarker.Info:
+                    color = ConsoleColor.White;
                     break;
                 default:
                     color = ConsoleColor.Gray;

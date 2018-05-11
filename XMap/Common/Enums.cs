@@ -2,10 +2,12 @@
 {
     public enum LogMarker
     {
-        Action,
         Macro,
+        Condtn,
+        Action,
         Config,
-        Error
+        Error,
+        Info,
     }
 
     public enum Keys

@@ -12,7 +12,7 @@ namespace XMap
     {
         public Mapping config { get; private set; }
         public XInputController Controller { get; private set; } = new XInputController();
-
+        public WindowManager winManager = new WindowManager();
         public Setup(string configFile = "")
         {
             if (string.IsNullOrEmpty(configFile))
@@ -85,9 +85,40 @@ namespace XMap
         {
             foreach (var macro in macros)
             {
-                Log.WriteAction(LogMarker.Macro, macro.ToString());
 
-                for(int i = 0; i < macro.Actions.Count; i++)
+                bool conditionsMet = true;
+                // If the active window is defined in the macro,
+                // determine if the current window meets the condition
+                if (!string.IsNullOrEmpty(macro.ActiveProcess))
+                {
+                    var processName = winManager.GetActiveProcessName();
+                    // If the macros ActiveProcess doesn't equal the current active process
+                    if (!processName.Equals(macro.ActiveProcess, StringComparison.OrdinalIgnoreCase))
+                    {
+                        conditionsMet = false;
+                    }
+
+                    
+                }
+
+                Log.WriteLineColor("=================================================================================================", ConsoleColor.DarkGray);
+                Log.WriteAction(LogMarker.Macro, macro.ToString());
+                if (!conditionsMet)
+                {
+                    Log.WriteAction(LogMarker.Condtn, $"Macro condition \"ActiveProcess\"==\"{macro.ActiveProcess}\" failed.");
+                    continue;
+                }
+                else
+                {
+                    Log.WriteAction(LogMarker.Condtn, $"Macro condition \"ActiveProcess\"==\"{macro.ActiveProcess}\" successful.");
+                }
+
+
+                
+
+
+
+                for (int i = 0; i < macro.Actions.Count; i++)
                 {
                     var action = macro.Actions[i];
                     Log.WriteAction(LogMarker.Action, $"\t {i + 1}. {action.ToString()}");

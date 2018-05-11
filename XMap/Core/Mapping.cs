@@ -20,6 +20,9 @@ namespace XMap.Core
         public string OnKeyDown { get; set; }
 
         [XmlAttribute]
+        public string ActiveProcess { get; set; }
+
+        [XmlAttribute]
         public int HoldTime { get; set; }
 
         [XmlElement(ElementName = "Action")]
@@ -29,10 +32,10 @@ namespace XMap.Core
         {
             if(HoldTime != 0)
             {
-                return $"\"{this.OnKeyDown}\" was held down for {this.HoldTime} seconds, executing {this.Actions.Count()} macro actions.";
+                return $"\"{this.OnKeyDown}\" was held down for {this.HoldTime} seconds, trying to execute {this.Actions.Count()} macro actions.";
             }
 
-            return $"\"{this.OnKeyDown}\" was pressed, executing {this.Actions.Count()} macro actions.";
+            return $"\"{this.OnKeyDown}\" was pressed, trying to execute {this.Actions.Count()} macro actions.";
         }
     }
 }
