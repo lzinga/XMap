@@ -38,8 +38,8 @@ namespace XMap
 #endif
             configWatcher.Changed += ConfigFile_Changed;
             configWatcher.EnableRaisingEvents = true;
-            Controller.OnButtonPressed += Controller_OnButtonPressed;
-            Controller.OnButtonHold += Controller_OnButtonHold;
+            Controller.OnButtonPressed += ControllerEvent;
+            Controller.OnButtonHold += ControllerEvent;
         }
 
         private void LoadFile(string file)
@@ -61,34 +61,39 @@ namespace XMap
             this.LoadFile(e.FullPath);
         }
 
-        private bool Controller_OnButtonHold(GamepadButtonFlags buttons, TimeSpan duration)
+        private bool ControllerEvent(XInputControllerState state)
         {
-            return RunMacros();
+            return RunMacros(state);
         }
 
-        private void Controller_OnButtonPressed(GamepadButtonFlags buttons)
-        {
-            RunMacros();
-        }
-
-        private bool RunMacros()
+        private bool RunMacros(XInputControllerState state)
         {
             bool anyExecuted = false;
-
             foreach (var macro in config.Macros)
             {
                 bool conditionsMet = true;
+                List<string> conditionChecks = new List<string>();
                 foreach(var condition in macro.Conditions)
                 {
-                    if(condition.Validate(Controller, windowManager))
+                    var passed = condition.Validate(state, windowManager);
+                    if (!passed)
                     {
                         conditionsMet = false;
                     }
+
+                    conditionChecks.Add($"{condition.ToString()} Did it pass? {passed}");
                 }
 
                 if (!conditionsMet)
                 {
                     continue;
+                }
+
+                Log.WriteLineColor("================================================================", ConsoleColor.DarkGray);
+                Log.WriteAction(LogMarker.Macro, $"{macro.Name} macro conditions passed, executing {macro.Actions.Count} actions.");
+                foreach(var conLog in conditionChecks)
+                {
+                    Log.WriteAction(LogMarker.Condtn, conLog);
                 }
 
                 for (int i = 0; i < macro.Actions.Count; i++)

@@ -18,10 +18,10 @@ namespace XMap.Core
 
         #region Events
         public event ButtonPressed OnButtonPressed;
-        public delegate void ButtonPressed(GamepadButtonFlags buttons);
+        public delegate bool ButtonPressed(XInputControllerState state);
 
         public event ButtonHold OnButtonHold;
-        public delegate bool ButtonHold(GamepadButtonFlags buttons, TimeSpan duration);
+        public delegate bool ButtonHold(XInputControllerState state);
         #endregion
 
         #region Private Fields
@@ -55,9 +55,8 @@ namespace XMap.Core
                 if (previousState.PacketNumber != currentState.PacketNumber)
                 {
                     this.HoldingButtons = false;
-                    CheckButtonPressed(currentState.Gamepad);
+                    CheckButtonPressed(this.GetState());
                     holdButtonStart = null;
-                    this.Gamepad = currentState.Gamepad;
                 }
                 else if(previousState.PacketNumber == currentState.PacketNumber && currentState.Gamepad.Buttons != GamepadButtonFlags.None)
                 {
@@ -71,7 +70,7 @@ namespace XMap.Core
                         this.CurrentHoldTime = DateTime.Now - holdButtonStart.Value;
                     }
 
-                    CheckButtonHeld(currentState.Gamepad, this.CurrentHoldTime);
+                    CheckButtonHeld(this.GetState());
                 }
 
                 Thread.Sleep(10);
@@ -79,19 +78,29 @@ namespace XMap.Core
             }
         }
 
-        private void CheckButtonPressed(Gamepad state)
+        public XInputControllerState GetState()
         {
-            if (state.Buttons != GamepadButtonFlags.None)
+            return new XInputControllerState()
             {
-                OnButtonPressed?.Invoke(state.Buttons);
+                State = this.controller.GetState(),
+                CurrentHoldTime = this.CurrentHoldTime,
+                HoldingButtons = this.HoldingButtons
+            };
+        }
+
+        private void CheckButtonPressed(XInputControllerState state)
+        {
+            if (state.State.Gamepad.Buttons != GamepadButtonFlags.None)
+            {
+                OnButtonPressed?.Invoke(state);
             }
         }
 
-        private void CheckButtonHeld(Gamepad state, TimeSpan duration)
+        private void CheckButtonHeld(XInputControllerState state)
         {
-            if (state.Buttons != GamepadButtonFlags.None)
+            if (state.State.Gamepad.Buttons != GamepadButtonFlags.None)
             {
-                if (OnButtonHold != null && OnButtonHold.Invoke(state.Buttons, duration))
+                if (OnButtonHold != null && OnButtonHold.Invoke(this.GetState()))
                 {
                     holdButtonStart = null;
                 }

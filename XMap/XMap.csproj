@@ -64,11 +64,13 @@
     <Compile Include="Core\Actions\TextAction.cs" />
     <Compile Include="Core\Actions\KeyAction.cs" />
     <Compile Include="Core\Conditions\BaseCondition.cs" />
+    <Compile Include="Core\Conditions\ActiveProcess.cs" />
     <Compile Include="Core\Conditions\ButtonPressed.cs" />
     <Compile Include="Core\InputManager.cs" />
     <Compile Include="Core\Mapping.cs" />
     <Compile Include="Core\WindowManager.cs" />
     <Compile Include="Core\XInputController.cs" />
+    <Compile Include="Core\XInputControllerState.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Setup.cs" />

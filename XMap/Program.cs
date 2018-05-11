@@ -15,8 +15,6 @@ namespace XMap
                 {
                     new Macro()
                     {
-                        OnKeyDown = "A",
-
                         Actions = new System.Collections.Generic.List<Core.Actions.BaseAction>()
                         {
                             new KeyAction()
