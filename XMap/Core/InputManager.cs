@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using WindowsInput;
@@ -24,8 +26,16 @@ namespace XMap.Core
 
         public void KeyDown(Keys key)
         {
-            var vKey = this.ToVKey(key);
+            var vKey = ToVKey(key);
             input.Keyboard.KeyDown(vKey);
+        }
+
+        public void KeyDownWithModifier(IEnumerable<ModifierKeys> modifier, IEnumerable<Keys> keys)
+        {
+            var mod = modifier.Select(i => ToVKey(i));
+            var key = keys.Select(i => ToVKey(i));
+
+            input.Keyboard.ModifiedKeyStroke(mod, key);
         }
 
         public void Text(string str)
@@ -33,7 +43,12 @@ namespace XMap.Core
             input.Keyboard.TextEntry(str);
         }
 
-        private VirtualKeyCode ToVKey(Keys key)
+        public static VirtualKeyCode ToVKey(Keys key)
+        {
+            return (VirtualKeyCode)((int)key);
+        }
+
+        public static VirtualKeyCode ToVKey(ModifierKeys key)
         {
             return (VirtualKeyCode)((int)key);
         }

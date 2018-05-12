@@ -1,4 +1,6 @@
-﻿using System.Xml.Serialization;
+﻿using System;
+using System.Collections.Generic;
+using System.Xml.Serialization;
 using XMap.Common;
 
 namespace XMap.Core.Actions
@@ -9,11 +11,34 @@ namespace XMap.Core.Actions
         public string Modifier { get; set; }
 
         [XmlAttribute]
-        public Keys Key { get; set; }
+        public string Key { get; set; }
 
         public override void Execute()
         {
-            this.input.KeyDown(this.Key);
+
+            List<ModifierKeys> modifiers = new List<ModifierKeys>();
+            var elements = Modifier.Split(',');
+            foreach(var modifier in elements)
+            {
+                ModifierKeys result;
+                if (Enum.TryParse(modifier, out result))
+                {
+                    modifiers.Add(result);
+                }
+            }
+
+            List<Keys> keys = new List<Keys>();
+            var elements2 = Key.Split(',');
+            foreach (var key in elements2)
+            {
+                Keys result;
+                if (Enum.TryParse(key, out result))
+                {
+                    keys.Add(result);
+                }
+            }
+
+            this.input.KeyDownWithModifier(modifiers, keys);
         }
 
         public override string ToString()

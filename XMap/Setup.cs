@@ -19,11 +19,10 @@ namespace XMap
         {
             if (string.IsNullOrEmpty(configFile))
             {
-#if RELEASE
-                configFile = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "Configs", "map.xml");
-#endif
 #if DEBUG
                 configFile = Path.GetFullPath(Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "..", "..", "Configs", "map.xml"));
+#else
+                configFile = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "Configs", "map.xml");
 #endif
             }
 

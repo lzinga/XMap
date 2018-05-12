@@ -1,4 +1,5 @@
-﻿using XMap.Common;
+﻿using System;
+using XMap.Common;
 using XMap.Core;
 using XMap.Core.Actions;
 using XMap.Core.Conditions;
@@ -9,30 +10,9 @@ namespace XMap
     {
         static void Main(string[] args)
         {
-            //Mapping test = new Mapping()
-            //{
-            //    Macros = new System.Collections.Generic.List<Macro>()
-            //    {
-            //        new Macro()
-            //        {
-            //            Actions = new System.Collections.Generic.List<Core.Actions.BaseAction>()
-            //            {
-            //                new KeyAction()
-            //                {
-            //                     Key = Common.Keys.A,
-            //                }
-            //            },
-            //             Conditions = new System.Collections.Generic.List<Core.Conditions.BaseCondition>()
-            //             {
-            //                 new ButtonsPressed()
-            //             }
-            //        }
-            //    }
-            //};
-
-            //test.Serialize();
-
+            Log.WriteLine($"Thank you for using XMap");
             Setup setup = new Setup().Execute();
+            Console.ReadKey();
         }
 
     }

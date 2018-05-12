@@ -35,5 +35,6 @@ namespace XMap.Core
                 return this.Conditions.Any(i => i.GetType() == typeof(HoldCondition));
             }
         }
+
     }
 }

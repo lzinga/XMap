@@ -10,6 +10,54 @@
         Info,
     }
 
+    public enum ModifierKeys
+    {
+        /// <summary>
+        /// Shift Key
+        /// </summary>
+        Shift = 16,
+
+        /// <summary>
+        /// CTRL Key
+        /// </summary>
+        Control = 17,
+
+        /// <summary>
+        /// ALT Key
+        /// </summary>
+        Alt = 18,
+
+        /// <summary>
+        /// Left Control
+        /// </summary>
+        ControlLeft = 162,
+
+        /// <summary>
+        /// Right CONTROL key - Used only as parameters to GetAsyncKeyState() and GetKeyState()
+        /// </summary>
+        ControlRight = 163,
+
+        /// <summary>
+        /// Left MENU key - Used only as parameters to GetAsyncKeyState() and GetKeyState()
+        /// </summary>
+        AltLeft = 164,
+
+        /// <summary>
+        /// Right MENU key - Used only as parameters to GetAsyncKeyState() and GetKeyState()
+        /// </summary>
+        AltRight = 165,
+
+        /// <summary>
+        /// Left Windows key (Natural keyboard)
+        /// </summary>
+        WindowsLeft = 91,
+
+        /// <summary>
+        /// Right Windows key (Natural keyboard)
+        /// </summary>
+        WindowsRight = 92,
+    }
+
     public enum Keys
     {
         /// <summary>
@@ -41,21 +89,6 @@
         /// Enter Key
         /// </summary>
         Return = 13,
-
-        /// <summary>
-        /// Shift Key
-        /// </summary>
-        Shift = 16,
-
-        /// <summary>
-        /// CTRL Key
-        /// </summary>
-        Control = 17,
-
-        /// <summary>
-        /// ALT Key
-        /// </summary>
-        Alt = 18,
 
         /// <summary>
         /// ESC Key
@@ -276,16 +309,6 @@
         /// Z key
         /// </summary>
         Z = 90,
-
-        /// <summary>
-        /// Left Windows key (Natural keyboard)
-        /// </summary>
-        WindowsLeft = 91,
-
-        /// <summary>
-        /// Right Windows key (Natural keyboard)
-        /// </summary>
-        WindowsRight = 92,
 
         /// <summary>
         /// Numeric keypad 0 key

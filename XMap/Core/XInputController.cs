@@ -1,4 +1,5 @@
-﻿using SharpDX.XInput;
+﻿using SharpDX;
+using SharpDX.XInput;
 using System;
 using System.Threading;
 using XMap.Common;
@@ -9,7 +10,13 @@ namespace XMap.Core
     {
         #region Public Properties
         public int deadband = 2500;
-        public bool Connected { get; set; } = false;
+        public bool Connected
+        {
+            get
+            {
+                return this.controller.IsConnected;
+            }
+        }
         public bool IsPolling { get; private set; }
         public bool HoldingButtons { get; private set; }
         public TimeSpan CurrentHoldTime { get; private set; }
@@ -34,7 +41,22 @@ namespace XMap.Core
         public XInputController()
         {
             controller = new Controller(UserIndex.One);
-            Connected = controller.IsConnected;
+            CheckForController();
+        }
+
+        public bool CheckForController()
+        {
+            // If the controller is not connected, wait for it to be.
+            if (!controller.IsConnected)
+            {
+                Log.WriteAction(LogMarker.Info, $"Waiting for controller. Will check every 3 seconds.");
+                while (!controller.IsConnected)
+                {
+                    Thread.Sleep(3000);
+                }
+            }
+            Log.WriteAction(LogMarker.Info, $"Controller Found");
+            return true;
         }
 
         public void Stop()
@@ -50,10 +72,19 @@ namespace XMap.Core
             IsPolling = true;
 
             previousState = controller.GetState();
-            while (this.Connected && this.IsPolling)
+            while (this.IsPolling)
             {
                 func();
-                var currentState = controller.GetState();
+                State currentState;
+                try
+                {
+                    currentState = controller.GetState();
+                }
+                catch (SharpDXException ex)
+                {
+                    CheckForController();
+                    continue;
+                }
                 
                 if (previousState.PacketNumber != currentState.PacketNumber)
                 {
