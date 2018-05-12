@@ -7,8 +7,24 @@ If you can't contribute directly in programming but have a problem just open an 
 else can get to it!
 
 # XML Macro Config file
-XMap loads an xml file from the `\Configs\` folder, right now it only supports a predefined one but will probably make it support more later.
-Upon execution of the program the controller should vibrate if it is properly connected or has that ability.
+XMap loads an xml file from the `\Configs\` folder, right now it only supports a predefined one but will probably make it support more later. Here is an example of a fully working config file that I created for myself. Past it, you will find a list of all actions/conditions currently available.
+
+```xml
+<?xml version="1.0" encoding="utf-16"?>
+<Mapping xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Macro Name="Stop Project64">
+    <Conditions>
+      <Condition xsi:type="ButtonsPressed" Key="Start, Back" />
+      <Condition xsi:type="Hold" Key="5" />
+    </Conditions>
+    <Actions>
+      <Action xsi:type="Key" Modifier="Shift" Key="F8" />
+      <Action xsi:type="Vibrate" Amount="25" Duration="1" />
+    </Actions>
+  </Macro>
+</Mapping>
+```
+
 
 ### Conditions
 A Macro requires conditions, XMap will check these conditions on button presses to see if any of them match.
