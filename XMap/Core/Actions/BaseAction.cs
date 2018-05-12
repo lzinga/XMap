@@ -1,6 +1,6 @@
 ﻿namespace XMap.Core.Actions
 {
-    public class BaseAction : IAction
+    public class BaseAction
     {
         protected InputManager input;
         
@@ -9,6 +9,6 @@
             input = new InputManager();
         }
 
-        public virtual void Execute() { }
+        public virtual void Execute(XInputController controller) { }
     }
 }

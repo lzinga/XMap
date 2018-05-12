@@ -23,9 +23,7 @@ namespace XMap.Core.Conditions
                 return true;
             }
 
-
-            // Default validate returns false.
-            return base.Validate(controller, window);
+            return false;
         }
 
         public override string ToString()

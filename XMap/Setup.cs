@@ -169,7 +169,7 @@ namespace XMap
             {
                 var action = macro.Actions[i];
                 Log.WriteAction(LogMarker.Action, $"\t {i + 1}. {action.ToString()}");
-                action.Execute();
+                action.Execute(Controller);
             }
         }
 

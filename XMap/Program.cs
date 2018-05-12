@@ -1,4 +1,7 @@
-﻿using System;
+﻿using SharpDX.XInput;
+using System;
+using System.Linq;
+using System.Text;
 using XMap.Common;
 using XMap.Core;
 using XMap.Core.Actions;

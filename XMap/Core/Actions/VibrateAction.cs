@@ -8,20 +8,23 @@ using WindowsInput.Native;
 
 namespace XMap.Core.Actions
 {
-    [XmlType(TypeName = "Text")]
-    public class TextAction : BaseAction
+    [XmlType(TypeName = "Vibrate")]
+    public class VibrateAction : BaseAction
     {
         [XmlAttribute]
-        public string Key { get; set; }
+        public int Amount { get; set; }
+
+        [XmlAttribute]
+        public double Duration { get; set; }
 
         public override void Execute(XInputController controller)
         {
-            this.input.Text(this.Key);
+            controller.Vibrate(Amount, Duration);
         }
 
         public override string ToString()
         {
-            return $"Writing \"{this.Key}\".";
+            return $"Vibrating {Amount}% for {Duration} seconds.";
         }
     }
 }

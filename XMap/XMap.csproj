@@ -101,8 +101,7 @@
     <Compile Include="Common\Log.cs" />
     <Compile Include="Common\Utilities.cs" />
     <Compile Include="Core\Actions\BaseAction.cs" />
-    <Compile Include="Core\Actions\IAction.cs" />
-    <Compile Include="Core\Actions\EnableJoyStickMouseAction.cs" />
+    <Compile Include="Core\Actions\VibrateAction.cs" />
     <Compile Include="Core\Actions\TextAction.cs" />
     <Compile Include="Core\Actions\KeyAction.cs" />
     <Compile Include="Core\Conditions\HoldCondition.cs" />

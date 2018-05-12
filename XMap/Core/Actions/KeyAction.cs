@@ -5,6 +5,7 @@ using XMap.Common;
 
 namespace XMap.Core.Actions
 {
+    [XmlType(TypeName = "Key")]
     public class KeyAction : BaseAction
     {
         [XmlAttribute]
@@ -13,7 +14,7 @@ namespace XMap.Core.Actions
         [XmlAttribute]
         public string Key { get; set; }
 
-        public override void Execute()
+        public override void Execute(XInputController controller)
         {
 
             List<ModifierKeys> modifiers = new List<ModifierKeys>();

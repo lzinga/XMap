@@ -21,6 +21,7 @@ namespace XMap.Core
         public bool HoldingButtons { get; private set; }
         public TimeSpan CurrentHoldTime { get; private set; }
         public Gamepad Gamepad { get; private set; }
+        public bool IsVibrating { get; private set; }
         #endregion
 
         #region Events
@@ -56,7 +57,44 @@ namespace XMap.Core
                 }
             }
             Log.WriteAction(LogMarker.Info, $"Controller Found");
+            // Vibrate the controller to mark that XMap is starting polling.
+            this.Vibrate(25, 0.25);
+
             return true;
+        }
+
+        public void Vibrate(int vibrateAmount, double length)
+        {
+            if(vibrateAmount > 100 || vibrateAmount <= 0)
+            {
+                Log.WriteAction(LogMarker.Error, $"The vibrate amount of {vibrateAmount} is invalid. Must be between 1 and 100");
+                return;
+            }
+
+
+            ushort amount = (ushort)((ushort.MaxValue * vibrateAmount) / 100);
+
+            DateTime endTime = DateTime.Now.AddSeconds(length);
+            var vib = new Vibration()
+            {
+                LeftMotorSpeed = amount,
+                RightMotorSpeed = amount
+            };
+
+            while (DateTime.Now < endTime)
+            {
+                if (!this.IsVibrating)
+                {
+                    controller.SetVibration(vib);
+                }
+
+                this.IsVibrating = true;
+            }
+
+            vib.LeftMotorSpeed = 0;
+            vib.RightMotorSpeed = 0;
+            controller.SetVibration(vib);
+            this.IsVibrating = false;
         }
 
         public void Stop()
@@ -74,6 +112,7 @@ namespace XMap.Core
             previousState = controller.GetState();
             while (this.IsPolling)
             {
+
                 func();
                 State currentState;
                 try
@@ -88,6 +127,7 @@ namespace XMap.Core
                 
                 if (previousState.PacketNumber != currentState.PacketNumber)
                 {
+                    Console.WriteLine(currentState.Gamepad.Buttons);
                     this.HoldingButtons = false;
                     CheckButtonPressed(this.GetState());
                     holdButtonStart = null;

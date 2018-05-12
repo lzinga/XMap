@@ -22,13 +22,12 @@ namespace XMap.Core.Conditions
                 return true;
             }
 
-            // Default validate returns false.
-            return base.Validate(state, window);
+            return false;
         }
 
         public override string ToString()
         {
-            return $"{nameof(ActiveProcessCondition)} condition, is active window {this.Key}?";
+            return $"{this.GetType().Name}: is active window {this.Key}?";
         }
     }
 }
