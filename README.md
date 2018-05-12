@@ -70,8 +70,7 @@ To also note, all actions will be executed in what ever application is currently
 ```
 
 ### Creation of Actions and Conditions
-To create an action or condition for this all you have to do is create a new object and inherit the `BaseAction` or `BaseCondition` object.
-Here are two objects showing what an action and a condition look like -
+To create an action or condition all you have to do is create a new class and inherit the `BaseAction` or `BaseCondition` object. Here are two examples showing what an action and a condition look like -
 
 #### Action
 ```csharp
