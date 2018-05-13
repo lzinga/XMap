@@ -127,7 +127,6 @@ namespace XMap.Core
                 
                 if (previousState.PacketNumber != currentState.PacketNumber)
                 {
-                    Console.WriteLine(currentState.Gamepad.Buttons);
                     this.HoldingButtons = false;
                     CheckButtonPressed(this.GetState());
                     holdButtonStart = null;
